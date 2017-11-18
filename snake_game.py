@@ -14,13 +14,13 @@ state = True # running state
 
 
 class snake:
-    def __init__(self,x,y,radius,direction,dots, color):
+    def __init__(self,x,y,radius, dots, color):
         self.x = x
         self.y = y
         self.radius = radius
-        self.direction = direction
+        self.direction = 'd'
         self.dots = dots
-        self.locations = [[x,y],[x+2*radius,y],[x+4*radius,y]]
+        self.locations = [[x+4*radius,y], [x+2*radius,y], [x,y]]
         self.color = color
         r = 0 if color[0]-60 < 0 else color[0]-60 #ternary operator
         g = 0 if color[1]-60 < 0 else color[1]-60
@@ -97,10 +97,16 @@ class snake:
             
     def hit(self):
         dots = self.locations
-        for i in range(1,self.dots):
-            if math.sqrt((dots[i][0]-self.x)**2+(dots[i][1]-self.y)**2) <= (2*self.radius-15):
+        
+        for i in range(0,len(dots)-1):
+            
+            d = math.sqrt((dots[i][0]-self.x)**2+(dots[i][1]-self.y)**2)
+            print (d)
+            if d <= self.radius:
                 return True
         return False
+    def print_dots(self):
+        print(self.locations)
 
 class food:
     def __init__(self, radius):
@@ -115,7 +121,7 @@ class food:
         self.x = random.randint(50,600)
         self.y = random.randint(50,500)
 
-snake1 = snake(200,200,10,'d',3,(200,100,120))
+snake1 = snake(200,200,10,3,(200,100,120))
 food1 = food(9)
 
 collide = False
@@ -137,11 +143,14 @@ while state:
     screen.fill(background)
     pygame.draw.rect(screen,(150,75,220),rect,25)
     food1.draw()
+    snake1.print_dots()
+    if snake1.collision() or snake1.hit():
+        collide = True
     if not collide:
         snake1.cont_move()
     snake1.draw()
-    if snake1.collision() or snake1.hit():
-        collide = True
+    
+    
     snake1.eating(food1)
     pygame.display.flip()
     pygame.time.delay(150)
